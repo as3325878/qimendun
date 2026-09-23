@@ -47,6 +47,16 @@ try {
     { key: "QM20260923001010EXW3", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
     { key: "QM20260923001011GSQ6", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
     { key: "QM20260923001012DH8N", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+    { key: "QM20260923001013PKZP", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001014NWEK", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001015PFM9", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001016BF7Y", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM202609230010178JUK", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001018XCPC", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM202609230010198RHW", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM202609230010205GEB", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001021CAKU", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
+    { key: "QM20260923001022V763", days: 365, status: 'active', from: 'gen', createdAt: 1790160000000 },
   ] };
 } catch (e) { BUILTIN_CARDS = null; }
 
