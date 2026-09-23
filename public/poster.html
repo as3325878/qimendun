@@ -198,7 +198,7 @@ body{
     </div>
     <div class="poster-bottom">
       <div class="poster-qr">
-        <img src="/api/qrcode?text=https%3A%2F%2Fqimendun.netlify.app%2F" alt="二维码">
+        <img id="qr-img" src="/api/qrcode?text=https%3A%2F%2Fqimendun.netlify.app%2F" alt="二维码">
       </div>
       <div class="poster-qr-text">
         <div class="t1">长按扫码 · 起一局</div>
@@ -246,5 +246,13 @@ function savePoster(){
 }
 </script>
 
+
+<script>
+// 分享二维码防缓存：加载时追加时间戳参数
+(function () {
+  var img = document.getElementById('qr-img');
+  if (img) { img.src = '/api/qrcode?text=' + encodeURIComponent(location.origin + '/') + '&v=' + Date.now(); }
+})();
+</script>
 </body>
 </html>

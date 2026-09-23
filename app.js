@@ -36,10 +36,18 @@ if (!USE_MEMORY) {
 /* 内置卡密：随部署打包，供 Netlify/Serverless 内存模式下使用（本地文件模式不使用） */
 let BUILTIN_CARDS = null;
 try {
-  const _raw = require('./data/cards.json');
-  if (_raw && Array.isArray(_raw.cards) && _raw.cards.length) {
-    BUILTIN_CARDS = { cards: _raw.cards.filter(function (c) { return c.status === 'active'; }) };
-  }
+  BUILTIN_CARDS = { cards: [
+    { key: "QM20260923001003RYSN", days: 30, status: 'active', from: 'gen', createdAt: 1790147938063 },
+    { key: "QM2026092300100488RC", days: 30, status: 'active', from: 'gen', createdAt: 1790147938063 },
+    { key: "QM20260923001005QGZZ", days: 30, status: 'active', from: 'gen', createdAt: 1790147938063 },
+    { key: "QM20260923001006RS7A", days: 30, status: 'active', from: 'gen', createdAt: 1790147938063 },
+    { key: "QM20260923001007YNJM", days: 30, status: 'active', from: 'gen', createdAt: 1790147938063 },
+    { key: "QM202609230010089RX5", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+    { key: "QM20260923001009R9KM", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+    { key: "QM20260923001010EXW3", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+    { key: "QM20260923001011GSQ6", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+    { key: "QM20260923001012DH8N", days: 365, status: 'active', from: 'gen', createdAt: 1790156991341 },
+  ] };
 } catch (e) { BUILTIN_CARDS = null; }
 
 /* ---------- 数据层（文件 / 内存双模式） ---------- */
