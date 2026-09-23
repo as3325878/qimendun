@@ -8,6 +8,7 @@
     "gen-cards": "node scripts/gen-cards.js"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.1.0",
     "express": "^4.19.2",
     "lunar-javascript": "^1.7.7",
     "qrcode": "^1.5.3",

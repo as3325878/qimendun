@@ -208,7 +208,31 @@ function loadProfile() {
   fetch(`/api/user/profile?userId=${currentUserId}`)
   .then(res => res.json())
   .then(res => {
-    if (res.code !== 200) { showAlert("加载失败", res.msg || "请刷新重试"); return; }
+    if (res.code !== 200) {
+      // 账号失效（服务端实例重启导致）→ 自动用设备标识重建
+      if (res.msg === '用户不存在' || res.code === 404) {
+        let deviceId = localStorage.getItem('qimen_device_id');
+        if (!deviceId) {
+          const parts = [navigator.userAgent, navigator.language, screen.width + 'x' + screen.height, screen.colorDepth, new Date().getTimezoneOffset(), navigator.hardwareConcurrency || '', navigator.platform || ''];
+          let hash = 0; const str = parts.join('|');
+          for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+          deviceId = 'fp_' + Math.abs(hash).toString(36);
+          localStorage.setItem('qimen_device_id', deviceId);
+        }
+        fetch('/api/user/init', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId }) })
+        .then(r => r.json())
+        .then(init => {
+          if (init.code === 200) {
+            currentUserId = init.data.userId;
+            localStorage.setItem('qimen_user_id', currentUserId);
+            loadProfile();
+          } else { showAlert("账号信息加载失败", "请返回首页重新进入"); }
+        })
+        .catch(() => showAlert("网络错误", "请稍后重试"));
+        return;
+      }
+      showAlert("加载失败", res.msg || "请刷新重试"); return;
+    }
     userData = res.data;
 
     document.getElementById('myId').innerText = userData.userCode || ('ID-' + (userData.userId || '—'));

@@ -50,6 +50,34 @@ try {
   ] };
 } catch (e) { BUILTIN_CARDS = null; }
 
+/* Netlify Blobs 持久化：Netlify 免费函数无持久磁盘，用官方 Blobs KV 存储用户/卡密数据
+ * 注意：需由函数入口先调用 connectLambda(event) 注入环境配置后，再调用 initBlobs() */
+let BLOBS_STORE = null;
+let BLOBS_READY = false;
+function initBlobs() {
+  if (BLOBS_STORE) return;
+  try {
+    const { getStore } = require('@netlify/blobs');
+    BLOBS_STORE = getStore('qimendun-data');
+    Promise.all([
+      BLOBS_STORE.get('db.json', { type: 'text' }).catch(function () { return null; }),
+      BLOBS_STORE.get('cards.json', { type: 'text' }).catch(function () { return null; })
+    ]).then(function (arr) {
+      try { if (arr[0]) { var d = JSON.parse(arr[0]); if (d && d.users) MEM_DB = d; } } catch (e) {}
+      try { if (arr[1]) { var c = JSON.parse(arr[1]); if (c && c.cards) MEM_CARDS = c; } } catch (e) {}
+      BLOBS_READY = true;
+      blobsPersist();
+    }).catch(function (e) { console.error('[blobs] preload fail:', e && e.message); });
+  } catch (e) { BLOBS_STORE = null; console.error('[blobs] init fail:', e && e.message); }
+}
+function blobsPersist() {
+  if (!BLOBS_STORE || !BLOBS_READY) return;
+  try {
+    if (MEM_DB) BLOBS_STORE.set('db.json', JSON.stringify(MEM_DB)).then(function(){ console.log('[blobs] db saved'); }).catch(function(e){ console.error('[blobs] db set fail:', e && e.message); });
+    if (MEM_CARDS) BLOBS_STORE.set('cards.json', JSON.stringify(MEM_CARDS)).then(function(){ console.log('[blobs] cards saved'); }).catch(function(e){ console.error('[blobs] cards set fail:', e && e.message); });
+  } catch (e) { console.error('[blobs] persist throw:', e && e.message); }
+}
+
 /* ---------- 数据层（文件 / 内存双模式） ---------- */
 let MEM_DB = null;
 let MEM_CARDS = null;
@@ -70,7 +98,7 @@ function readDb() {
   return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
 }
 function writeDb(db) {
-  if (USE_MEMORY) { MEM_DB = db; return; }
+  if (USE_MEMORY) { MEM_DB = db; blobsPersist(); return; }
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
 }
 function readCards() {
@@ -78,7 +106,7 @@ function readCards() {
   return JSON.parse(fs.readFileSync(CARDS_FILE, 'utf8'));
 }
 function writeCards(c) {
-  if (USE_MEMORY) { MEM_CARDS = c; return; }
+  if (USE_MEMORY) { MEM_CARDS = c; blobsPersist(); return; }
   fs.writeFileSync(CARDS_FILE, JSON.stringify(c, null, 2), 'utf8');
 }
 
@@ -128,6 +156,19 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* 首页数据 */
+app.get('/api/blobs-status', (req, res) => {
+  res.json({
+    netlifyEnv: !!process.env.NETLIFY,
+    vercelEnv: !!process.env.VERCEL,
+    useMemory: !!USE_MEMORY,
+    blobsStore: !!BLOBS_STORE,
+    blobsReady: !!BLOBS_READY,
+    memUsers: (MEM_DB && MEM_DB.users) ? MEM_DB.users.length : 0,
+    memCards: (MEM_CARDS && MEM_CARDS.cards) ? MEM_CARDS.cards.length : 0,
+    nodeEnv: process.env.NODE_ENV || ''
+  });
+});
+
 app.get('/api/stats', (req, res) => {
   const db = readDb();
   res.json({ code: 200, data: db.stats });
@@ -277,3 +318,4 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 
 ensureData();
 module.exports = app;
+app.initBlobs = initBlobs;
