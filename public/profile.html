@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>个人中心 · 奇门遁甲</title>
+<style>
+:root{--bg-color:#0b1310;--panel-bg:#14221c;--gold-color:#d4af37;--gold-light:#f2d77f;--text-main:#e0e6e3;--text-muted:#8a9b94;--green:#46c290;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;}
+body{background:var(--bg-color);color:var(--text-main);padding:10px;padding-top:42px;font-size:14px;-webkit-tap-highlight-color:transparent;background-image:radial-gradient(circle at 50% 0%, #142b22 0%, #0b1310 70%);min-height:100vh;}
+.btn-back{position:fixed;top:8px;left:8px;background:rgba(212,175,55,0.15);color:var(--gold-color);border:1px solid rgba(212,175,55,0.4);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;letter-spacing:1px;z-index:999;line-height:1.4;text-decoration:none;}
+.btn-back:active{background:rgba(212,175,55,0.35);}
+h1{text-align:center;color:var(--gold-light);margin-bottom:15px;font-size:20px;letter-spacing:2px;text-shadow:0 0 10px rgba(212,175,55,0.3);}
+.box{max-width:500px;margin:0 auto;}
+.card{background:var(--panel-bg);padding:16px;border-radius:12px;margin-bottom:14px;border:1px solid rgba(212,175,55,0.28);box-shadow:inset 0 0 20px rgba(0,0,0,0.5);}
+.card h3{color:var(--gold-color);margin-bottom:14px;font-size:15px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.2);padding-bottom:10px;letter-spacing:2px;}
+.card h3::before{content:"◆ ";font-size:8px;opacity:0.6;}
+.card h3::after{content:" ◆";font-size:8px;opacity:0.6;}
+
+/* 我的信息 */
+.user-info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(212,175,55,0.15);}
+.user-info-row:last-child{border-bottom:none;}
+.user-info-row .label{color:var(--text-muted);font-size:13px;letter-spacing:1px;}
+.user-info-row .value{color:var(--gold-light);font-weight:bold;font-size:14px;font-family:monospace;letter-spacing:1px;}
+.vip-active{color:var(--green) !important;}
+.vip-guest{color:var(--text-muted) !important;}
+
+/* 单次卡 */
+.single-card{background:linear-gradient(90deg,#1a2f27 0%,#0d1a15 100%);border:1px solid rgba(230,57,70,0.6);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;position:relative;box-shadow:0 0 16px rgba(230,57,70,0.2);}
+.single-card::before{content:"体验首选";position:absolute;top:-9px;left:14px;background:linear-gradient(180deg,#e63946,#c92a2a);color:#fff;font-size:10px;padding:2px 10px;border-radius:8px;letter-spacing:1px;}
+.single-card .name{color:var(--gold-light);font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:3px;}
+.single-card .desc{color:var(--text-muted);font-size:10.5px;letter-spacing:0.5px;}
+.single-card .right{text-align:right;flex-shrink:0;margin-left:10px;}
+.single-card .price{color:#ff7a7a;font-size:20px;font-weight:700;line-height:1;}
+.single-card .per{color:var(--text-muted);font-size:10px;margin-top:2px;}
+
+/* 会员 2x2 */
+.vip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.vip-card{background:#0d1a15;border:1px solid rgba(212,175,55,0.35);border-radius:10px;padding:16px 8px 14px;text-align:center;position:relative;}
+.vip-card.hot{border-color:rgba(230,57,70,0.7);box-shadow:0 0 14px rgba(230,57,70,0.25);background:linear-gradient(180deg,#1e1a18 0%,#0d1a15 100%);}
+.vip-card.hot::before{content:"最划算";position:absolute;top:-8px;right:8px;background:linear-gradient(180deg,#e63946,#c92a2a);color:#fff;font-size:10px;padding:2px 8px;border-radius:8px;letter-spacing:1px;}
+.vip-card .name{color:var(--text-main);font-size:12.5px;margin-bottom:10px;letter-spacing:1px;}
+.vip-card .per-day{color:var(--green);font-size:26px;font-weight:700;line-height:1;text-shadow:0 0 14px rgba(70,194,144,0.4);margin-bottom:4px;}
+.vip-card .per-day .unit{font-size:12px;font-weight:400;opacity:0.9;margin-left:2px;}
+.vip-card .per-day::before{content:"日均 ";font-size:11px;color:var(--text-muted);font-weight:400;display:block;margin-bottom:2px;letter-spacing:1px;}
+.vip-card .unlimited{color:var(--gold-light);font-size:11px;letter-spacing:1px;margin-bottom:8px;font-weight:500;}
+.vip-card .orig{color:var(--text-muted);font-size:11px;letter-spacing:0.5px;padding-top:8px;border-top:1px dashed rgba(212,175,55,0.18);}
+
+/* 提示框 */
+.tip-box{background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.45);border-radius:10px;padding:14px 12px;text-align:center;margin-bottom:14px;}
+.tip-box .big{color:var(--gold-light);font-size:15px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.tip-box .sub{color:var(--text-muted);font-size:12px;line-height:1.6;letter-spacing:0.5px;}
+
+/* 卡密输入 */
+.verify-box{border-top:1px dashed rgba(212,175,55,0.3);padding-top:14px;}
+.verify-box .label{color:var(--gold-light);font-size:13px;letter-spacing:2px;text-align:center;margin-bottom:10px;}
+.verify-box .label::before{content:"🔑 ";}
+.verify-input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:#0a1612;color:var(--gold-light);font-size:15px;font-family:monospace;letter-spacing:3px;text-align:center;outline:none;margin-bottom:10px;}
+.verify-input::placeholder{color:#5a6b62;font-family:"Songti SC",serif;font-size:13px;letter-spacing:1px;}
+.verify-input:focus{border-color:var(--gold-color);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.verify-btn{width:100%;padding:13px;background:linear-gradient(180deg,#d4af37 0%,#b38f2b 100%);color:#0b1310;border:none;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:3px;cursor:pointer;font-family:"Songti SC",serif;box-shadow:0 4px 14px rgba(212,175,55,0.35);}
+.verify-btn:active{transform:scale(0.98);}
+.verify-msg{font-size:12px;text-align:center;margin-top:8px;color:var(--text-muted);}
+
+/* 海报入口 */
+.poster-entry{display:block;text-decoration:none;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(70,194,144,0.08));border:1px solid rgba(212,175,55,0.4);border-radius:12px;padding:16px 14px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden;}
+.poster-entry::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:44%;height:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);}
+.poster-entry .icon{font-size:22px;margin-bottom:6px;}
+.poster-entry .title{color:var(--gold-light);font-size:15px;font-weight:700;letter-spacing:2px;margin-bottom:4px;}
+.poster-entry .sub{color:var(--text-muted);font-size:11.5px;letter-spacing:0.5px;}
+
+/* 弹窗 */
+.custom-alert{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);justify-content:center;align-items:center;z-index:2000;padding:30px;}
+.custom-alert .alert-box{background:linear-gradient(180deg,#142b22 0%,#0b1310 100%);border:1px solid var(--gold-color);border-radius:14px;padding:24px 20px;max-width:340px;width:100%;text-align:center;box-shadow:0 0 40px rgba(212,175,55,0.3);}
+.custom-alert .alert-title{color:var(--gold-color);font-size:17px;letter-spacing:3px;margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,0.25);font-weight:bold;}
+.custom-alert .alert-msg{color:var(--text-main);font-size:15px;line-height:1.8;margin-bottom:20px;}
+.custom-alert .alert-msg .hint-line{display:block;font-size:13px;color:var(--text-muted);margin-top:4px;}
+.custom-alert .alert-btn{width:100%;padding:12px;background:linear-gradient(180deg,#d4af37 0%,#b38f2b 100%);color:#0b1310;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;letter-spacing:2px;}
+</style>
+</head>
+<body>
+<a class="btn-back" href="/qimen.html">← 返回上一级</a>
+
+<div class="box">
+  <h1>个人中心</h1>
+
+  <!-- 我的信息 -->
+  <div class="card">
+    <h3>我的信息</h3>
+    <div class="user-info-row">
+      <span class="label">我的 ID</span>
+      <span class="value" id="myId">—</span>
+    </div>
+    <div class="user-info-row">
+      <span class="label">当前身份</span>
+      <span class="value" id="vipStatus">加载中...</span>
+    </div>
+  </div>
+
+  <!-- 会员体系 -->
+  <div class="card">
+    <h3>会员体系</h3>
+
+    <div class="single-card">
+      <div class="left">
+        <div class="name">单次解锁</div>
+        <div class="desc">本次报告永久有效 · 看完再决定</div>
+      </div>
+      <div class="right">
+        <div class="price">¥9.9</div>
+        <div class="per">一次一付</div>
+      </div>
+    </div>
+
+    <div class="vip-grid">
+      <div class="vip-card">
+        <div class="name">包月会员</div>
+        <div class="per-day">1.9<span class="unit">元</span></div>
+        <div class="unlimited">每天无限次数</div>
+        <div class="orig">¥58 / 30天</div>
+      </div>
+      <div class="vip-card">
+        <div class="name">季度会员</div>
+        <div class="per-day">1.4<span class="unit">元</span></div>
+        <div class="unlimited">每天无限次数</div>
+        <div class="orig">¥128 / 90天</div>
+      </div>
+      <div class="vip-card">
+        <div class="name">半年会员</div>
+        <div class="per-day">1.2<span class="unit">元</span></div>
+        <div class="unlimited">每天无限次数</div>
+        <div class="orig">¥218 / 180天</div>
+      </div>
+      <div class="vip-card hot">
+        <div class="name">包年会员</div>
+        <div class="per-day">1.0<span class="unit">元</span></div>
+        <div class="unlimited">每天无限次数</div>
+        <div class="orig">¥365 / 365天</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="big">开通会员，请联系你的好友申请卡密</div>
+    </div>
+
+    <div class="verify-box">
+      <div class="label">输入卡密开通会员</div>
+      <input type="text" id="cardKeyInput" class="verify-input" placeholder="请输入你的开通卡密" autocomplete="off">
+      <button class="verify-btn" onclick="verifyCardKey()">验 证 并 开 通</button>
+      <div id="verifyMsg" class="verify-msg"></div>
+    </div>
+  </div>
+
+  <!-- 海报入口 -->
+  <a class="poster-entry" href="/poster.html">
+    <div class="icon">🎴</div>
+    <div class="title">生成我的专属海报</div>
+    <div class="sub">一键生成 · 保存到相册 · 分享到朋友圈</div>
+  </a>
+</div>
+
+<div class="custom-alert" id="customAlert">
+  <div class="alert-box">
+    <div class="alert-title">温馨提示</div>
+    <div class="alert-msg" id="customAlertMsg"></div>
+    <button class="alert-btn" onclick="document.getElementById('customAlert').style.display='none'">确 定</button>
+  </div>
+</div>
+
+<script>
+let currentUserId = localStorage.getItem('qimen_user_id');
+let userData = null;
+
+function showAlert(msg, hint) {
+  let html = msg;
+  if (hint) html += '<span class="hint-line">' + hint + '</span>';
+  document.getElementById('customAlertMsg').innerHTML = html;
+  document.getElementById('customAlert').style.display = 'flex';
+}
+
+function loadProfile() {
+  if (!currentUserId) {
+    const deviceId = localStorage.getItem('qimen_device_id');
+    if (!deviceId) {
+      showAlert("请先返回首页起局一次", "系统会自动为您创建账号");
+      setTimeout(() => location.href = '/qimen.html', 1500);
+      return;
+    }
+    fetch('/api/user/init', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceId })
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.code === 200) {
+        currentUserId = res.data.userId;
+        localStorage.setItem('qimen_user_id', currentUserId);
+        loadProfile();
+      } else {
+        showAlert("账号信息加载失败", "请返回首页重新进入");
+      }
+    })
+    .catch(() => showAlert("网络错误", "请稍后重试"));
+    return;
+  }
+
+  fetch(`/api/user/profile?userId=${currentUserId}`)
+  .then(res => res.json())
+  .then(res => {
+    if (res.code !== 200) { showAlert("加载失败", res.msg || "请刷新重试"); return; }
+    userData = res.data;
+
+    document.getElementById('myId').innerText = userData.userCode || ('ID-' + (userData.userId || '—'));
+
+    const vipStatusEl = document.getElementById('vipStatus');
+    if (userData.isVip) {
+      const daysLeft = Math.ceil((userData.vipExpire - Date.now()) / (24 * 60 * 60 * 1000));
+      vipStatusEl.innerText = `尊贵会员（剩余 ${daysLeft} 天）`;
+      vipStatusEl.className = 'value vip-active';
+    } else {
+      vipStatusEl.innerText = '访客（未开通）';
+      vipStatusEl.className = 'value vip-guest';
+    }
+  })
+  .catch(() => showAlert("网络错误", "请稍后重试"));
+}
+
+function verifyCardKey() {
+  const cardKey = document.getElementById('cardKeyInput').value.trim();
+  const msgEl = document.getElementById('verifyMsg');
+  if (!cardKey) { msgEl.style.color = '#e63946'; msgEl.innerText = '请输入卡密'; return; }
+  if (!currentUserId) { msgEl.style.color = '#e63946'; msgEl.innerText = '请刷新页面重试'; return; }
+
+  msgEl.style.color = '#8a9b94';
+  msgEl.innerText = '正在验证...';
+
+  fetch('/api/pay/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cardKey, userId: currentUserId })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.code === 200) {
+      msgEl.style.color = '#46c290';
+      msgEl.innerText = '✅ ' + (res.data.message || '解锁成功');
+      document.getElementById('cardKeyInput').value = '';
+      setTimeout(() => loadProfile(), 800);
+    } else {
+      msgEl.style.color = '#e63946';
+      msgEl.innerText = '❌ ' + (res.msg || '卡密无效');
+    }
+  })
+  .catch(() => {
+    msgEl.style.color = '#e63946';
+    msgEl.innerText = '❌ 网络错误，请重试';
+  });
+}
+
+loadProfile();
+</script>
+</body>
+</html>

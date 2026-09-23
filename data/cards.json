@@ -1,0 +1,93 @@
+{
+  "cards": [
+    {
+      "key": "QM20260923001001H8CA",
+      "days": 30,
+      "status": "used",
+      "from": "gen",
+      "createdAt": 1790138931787,
+      "usedBy": 1002,
+      "usedAt": 1790138975671
+    },
+    {
+      "key": "QM20260923001004CXMK",
+      "days": 1,
+      "status": "used",
+      "owner": 1003,
+      "from": "claim",
+      "createdAt": 1790145099923,
+      "usedBy": 1003,
+      "usedAt": 1790145099929
+    },
+    {
+      "key": "QM20260923001003RYSN",
+      "days": 30,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790147938063
+    },
+    {
+      "key": "QM2026092300100488RC",
+      "days": 30,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790147938063
+    },
+    {
+      "key": "QM20260923001005QGZZ",
+      "days": 30,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790147938063
+    },
+    {
+      "key": "QM20260923001006RS7A",
+      "days": 30,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790147938063
+    },
+    {
+      "key": "QM20260923001007YNJM",
+      "days": 30,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790147938063
+    },
+    {
+      "key": "QM202609230010089RX5",
+      "days": 365,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790156991341
+    },
+    {
+      "key": "QM20260923001009R9KM",
+      "days": 365,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790156991341
+    },
+    {
+      "key": "QM20260923001010EXW3",
+      "days": 365,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790156991341
+    },
+    {
+      "key": "QM20260923001011GSQ6",
+      "days": 365,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790156991341
+    },
+    {
+      "key": "QM20260923001012DH8N",
+      "days": 365,
+      "status": "active",
+      "from": "gen",
+      "createdAt": 1790156991341
+    }
+  ]
+}

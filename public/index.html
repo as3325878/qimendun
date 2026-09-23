@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="奇门遁甲">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="/manifest.json">
+    <title>这人合不合？这事成不成？</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="这人合不合？这事成不成？">
+    <meta property="og:description" content="为什么大佬跟人合作或做事前，都会先用这个起局预测？天垂象，见吉凶">
+    <meta property="og:image" content="https://www.qimendun.net/share-cover.jpg">
+    <meta property="og:url" content="https://www.qimendun.net/">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style>
+        :root {
+            --bg-color: #0b1310;
+            --gold-color: #d4af37;
+            --gold-light: #f2d77f;
+            --text-main: #e0e6e3;
+            --text-muted: #8a9b94;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;}
+        html, body { height: 100%; }
+        body{
+            background: var(--bg-color); color: var(--text-main);
+            padding: 6px 14px 10px;
+            font-size: 14px;
+            -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(circle at 50% 0%, #142b22 0%, #0b1310 70%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .box{
+            max-width: 500px; margin: 0 auto;
+            display: flex; flex-direction: column;
+            min-height: calc(100vh - 16px);
+        }
+
+        /* ============ 头像 + 标题 ============ */
+        .header { text-align: center; margin-top: 0; margin-bottom: 10px; }
+        .avatar-wrap{
+            width: 220px; height: 220px;
+            margin: 0 auto -56px;
+            border-radius: 50%; overflow: hidden; position: relative;
+            border: 2px solid rgba(212,175,55,0.55);
+            box-shadow: 0 0 30px rgba(212,175,55,0.35), 0 0 60px rgba(212,175,55,0.15), inset 0 0 20px rgba(0,0,0,0.6);
+            animation: avatarPulse 3s ease-in-out infinite;
+        }
+        @keyframes avatarPulse {
+            0%,100%{ box-shadow: 0 0 30px rgba(212,175,55,0.35), 0 0 60px rgba(212,175,55,0.15), inset 0 0 20px rgba(0,0,0,0.6); }
+            50%{ box-shadow: 0 0 42px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.28), inset 0 0 20px rgba(0,0,0,0.6); }
+        }
+        .avatar-wrap::after {
+            content: ""; position: absolute; inset: 6px;
+            border: 1px solid rgba(212,175,55,0.3); border-radius: 50%; pointer-events: none;
+        }
+        .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .header h1 {
+            color: var(--gold-light);
+            font-size: 40px;
+            letter-spacing: 9px;
+            text-shadow: 0 0 24px rgba(212,175,55,0.9), 0 0 40px rgba(212,175,55,0.5), 0 3px 8px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.9);
+            margin-bottom: 6px;
+            padding-left: 10px;
+            font-weight: 700;
+            line-height: 1;
+            position: relative;
+            z-index: 2;
+        }
+        .sub {
+            color: var(--gold-color);
+            font-size: 11px;
+            letter-spacing: 2px;
+            opacity: 0.92;
+            white-space: nowrap;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        /* ============ 介绍框 ============ */
+        .intro {
+            background: linear-gradient(180deg, rgba(20,34,28,0.85) 0%, rgba(11,19,16,0.65) 100%);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 12px;
+            padding: 9px 13px;
+            margin-bottom: 14px;
+            line-height: 1.6;
+            font-size: 11.5px;
+            color: #b0c2b8;
+            text-align: justify;
+            box-shadow: inset 0 0 24px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .intro::before {
+            content: ""; position: absolute; top: -1px; left: 30px; right: 30px; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.7), transparent);
+        }
+        .intro p { margin-bottom: 6px; }
+        .intro p:last-child { margin-bottom: 0; }
+        .intro strong { color: var(--gold-light); font-weight: 700; }
+
+        /* ============ 标语 ============ */
+        .tagline {
+            text-align: center;
+            color: var(--gold-light);
+            font-size: 13px;
+            letter-spacing: 4px;
+            margin: 14px 0 14px 0;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(212,175,55,0.45);
+            padding-left: 4px;
+        }
+        .tagline::before, .tagline::after {
+            content: "❖"; margin: 0 8px; opacity: 0.6; color: var(--gold-color); font-size: 9px;
+        }
+
+        /* ============ 卡片（呼吸感） ============ */
+        .choice-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 10px;
+        }
+        .choice-card {
+            background: linear-gradient(180deg, #1d3530 0%, #0d1a15 100%);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 16px;
+            padding: 28px 12px 22px;
+            min-height: 260px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            color: var(--text-main);
+            display: block;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,175,55,0.15);
+            animation: cardBreath 3.5s ease-in-out infinite;
+        }
+        .choice-card:nth-child(2) { animation-delay: 1.75s; }
+        @keyframes cardBreath {
+            0%,100%{
+                border-color: rgba(212,175,55,0.35);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,175,55,0.15), 0 0 0 rgba(212,175,55,0);
+                transform: translateY(0);
+            }
+            50%{
+                border-color: rgba(242,215,127,0.75);
+                box-shadow: 0 6px 26px rgba(0,0,0,0.55), inset 0 1px 0 rgba(212,175,55,0.25), 0 0 24px rgba(212,175,55,0.35), 0 0 50px rgba(212,175,55,0.12);
+                transform: translateY(-2px);
+            }
+        }
+        .choice-card::before {
+            content: ""; position: absolute; inset: 7px;
+            border: 1px solid rgba(212,175,55,0.18); border-radius: 11px; pointer-events: none;
+        }
+        .choice-card::after {
+            content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 44%; height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        }
+        .choice-card:active { transform: scale(0.97); }
+
+        .card-icon {
+            width: 52px; height: 52px;
+            margin: 0 auto 10px;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(212,175,55,0.5));
+            position: relative;
+            z-index: 2;
+        }
+        .card-icon path, .card-icon circle, .card-icon line, .card-icon rect {
+            stroke: var(--gold-color);
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .choice-card h3 {
+            color: var(--gold-light); font-size: 22px; letter-spacing: 7px;
+            margin: 2px 0 12px; position: relative; z-index: 2;
+            text-shadow: 0 0 12px rgba(212,175,55,0.45); font-weight: 700;
+            padding-left: 7px;
+        }
+        .choice-card h3::after {
+            content: ""; display: block; width: 24px; height: 1px;
+            background: rgba(212,175,55,0.5); margin: 8px auto 0;
+        }
+        .choice-card p {
+            font-size: 12.5px; color: #9ab0a4; letter-spacing: 1.8px;
+            position: relative; z-index: 2; line-height: 1.9; margin-bottom: 10px;
+        }
+        .choice-card .stat {
+            border-top: 1px dashed rgba(212,175,55,0.22);
+            padding-top: 8px; margin-top: 4px;
+            font-size: 10px; color: #7a8b82; letter-spacing: 0.8px;
+            position: relative; z-index: 2;
+        }
+        .choice-card .stat b { color: var(--gold-color); font-weight: 700; font-size: 12px; }
+
+        .footer {
+            margin-top: auto; text-align: center;
+            font-size: 10px; color: #4a5a52;
+            padding-top: 10px; letter-spacing: 2px;
+        }
+        .footer::before {
+            content: ""; display: block; width: 36px; height: 1px;
+            background: rgba(212,175,55,0.3); margin: 0 auto 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="header">
+            <div class="avatar-wrap">
+                <img src="/share-cover.jpg" alt="玄女">
+            </div>
+            <h1>奇门遁甲</h1>
+        </div>
+
+        <div class="intro">
+            <p><strong>奇门遁甲</strong>被誉为“帝王之学”、世界公认的最高预测学，有“学会奇门遁，来人不用问”的民间佳话，是中华传统文化术数中的瑰宝。</p>
+            <p>它通过时间、空间的交汇等时空参数为模型，排布九宫、八门、九星、八神等元素参考，在天、地、人、神四个维度，为您解读所测之事的气运流转。</p>
+        </div>
+
+        <div class="sub">观天之道·得神之助·运筹帷幄·决胜千里</div>
+
+        <div class="tagline">请选择你要测的类型</div>
+
+        <div class="choice-grid">
+            <a class="choice-card" href="javascript:void(0)" onclick="goQimen('person')">
+                <svg class="card-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="14" r="7"/>
+                    <path d="M 22 58 Q 22 30 32 26 Q 42 30 42 58"/>
+                    <circle cx="32" cy="36" r="2.5"/>
+                </svg>
+                <h3>测人</h3>
+                <p>姻缘 · 合作<br>贵人 · 小人</p>
+                <div class="stat">已有 <b id="statNum1">—</b> 人测过</div>
+            </a>
+            <a class="choice-card" href="javascript:void(0)" onclick="goQimen('event')">
+                <svg class="card-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="14" y="10" width="36" height="44" rx="2"/>
+                    <line x1="20" y1="20" x2="44" y2="20"/>
+                    <line x1="20" y1="28" x2="44" y2="28"/>
+                    <line x1="20" y1="36" x2="38" y2="36"/>
+                    <line x1="20" y1="44" x2="34" y2="44"/>
+                    <line x1="10" y1="14" x2="10" y2="50" opacity="0.6"/>
+                    <line x1="54" y1="14" x2="54" y2="50" opacity="0.6"/>
+                </svg>
+                <h3>测事</h3>
+                <p>事业 · 财运<br>出行 · 决策</p>
+                <div class="stat">已有 <b id="statNum2">—</b> 人测过</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>传统文化学习娱乐 · 不构成任何建议</p>
+        </div>
+    </div>
+
+    <script>
+        function goQimen(type) {
+            const params = new URLSearchParams(window.location.search);
+            const ref = params.get('ref') || '';
+            let url = 'qimen.html?type=' + type;
+            if (ref) {
+                url += '&ref=' + encodeURIComponent(ref);
+            }
+            window.location.href = url;
+        }
+
+        (function(){
+            fetch('/api/stats')
+                .then(function(r){ return r.json(); })
+                .then(function(d){
+                    if (d && d.code === 200 && d.data) {
+                        var nP = d.data.displayPerson || 0;
+                        var nE = d.data.displayEvent  || 0;
+                        var s1 = document.getElementById('statNum1');
+                        var s2 = document.getElementById('statNum2');
+                        if (s1) s1.textContent = nP.toLocaleString();
+                        if (s2) s2.textContent = nE.toLocaleString();
+                    }
+                })
+                .catch(function(){});
+        })();
+    </script>
+</body>
+</html>

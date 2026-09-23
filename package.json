@@ -1,0 +1,21 @@
+{
+  "name": "qimendun",
+  "version": "1.0.0",
+  "description": "奇门遁甲在线起局预测站（重建版）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "gen-cards": "node scripts/gen-cards.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "lunar-javascript": "^1.7.7",
+    "qrcode": "^1.5.3",
+    "serverless-http": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,86 @@
+{
+  "users": [
+    {
+      "userId": 1001,
+      "userCode": "JT202609231001",
+      "deviceId": "fp_u59i9",
+      "ref": "",
+      "vipExpire": 0,
+      "isVip": false,
+      "inviteCode": "QMT4MEJ3",
+      "balance": 0,
+      "createdAt": 1790138783774
+    },
+    {
+      "userId": 1002,
+      "userCode": "JT202609231002",
+      "deviceId": "fp_998lk1",
+      "ref": "",
+      "vipExpire": 1792730975671,
+      "isVip": true,
+      "inviteCode": "QMTWYP22",
+      "balance": 0,
+      "createdAt": 1790138837131
+    },
+    {
+      "userId": 1003,
+      "userCode": "JT202609231003",
+      "deviceId": "fp_all_api_01",
+      "ref": "TEST",
+      "vipExpire": 1790231499929,
+      "isVip": true,
+      "inviteCode": "QM3DFG94",
+      "balance": 0,
+      "createdAt": 1790145099907
+    },
+    {
+      "userId": 1005,
+      "userCode": "JT202609231005",
+      "deviceId": "fp_netlify_test_01",
+      "ref": "",
+      "vipExpire": 0,
+      "isVip": false,
+      "inviteCode": "QMSDYBM2",
+      "balance": 0,
+      "createdAt": 1790145950292
+    },
+    {
+      "userId": 1006,
+      "userCode": "JT202609231006",
+      "deviceId": "fp_node_e2e_01",
+      "ref": "",
+      "vipExpire": 0,
+      "isVip": false,
+      "inviteCode": "QMSBUNKA",
+      "balance": 0,
+      "createdAt": 1790154284148
+    },
+    {
+      "userId": 1007,
+      "userCode": "JT202609231007",
+      "deviceId": "test-device-001",
+      "ref": "",
+      "vipExpire": 1821696306192,
+      "isVip": true,
+      "inviteCode": "QMVYPDEQ",
+      "balance": 0,
+      "createdAt": 1790160306189
+    }
+  ],
+  "messages": [
+    {
+      "id": 1790145100430,
+      "userId": 1003,
+      "contact": "weixin_test",
+      "content": "站点很好用",
+      "createdAt": 1790145099920
+    }
+  ],
+  "stats": {
+    "totalQimen": 110,
+    "displayPerson": 1038,
+    "displayEvent": 2120,
+    "totalUsers": 6
+  },
+  "cardSeq": 1007
+}

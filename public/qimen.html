@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="奇门遁甲">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <title>奇门遁甲 · 上古秘术</title>
+    <style>
+        /* Google Fonts 已移除，使用系统字体加速 */
+        :root { --bg-color: #0b1310; --panel-bg: #14221c; --gold-color: #d4af37; --gold-light: #f2d77f; --red-color: #c92a2a; --text-main: #e0e6e3; --text-muted: #8a9b94; }
+        *{box-sizing:border-box;margin:0;padding:0;font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;}
+        body{background: var(--bg-color); color: var(--text-main); padding:10px; padding-top: 42px; font-size:14px; -webkit-tap-highlight-color: transparent; background-image: radial-gradient(circle at 50% 0%, #142b22 0%, #0b1310 70%);}
+        .btn-home { position: fixed; top: 8px; left: 8px; background: rgba(212,175,55,0.15); color: var(--gold-color); border: 1px solid rgba(212,175,55,0.4); padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; letter-spacing: 1px; z-index: 999; line-height: 1.4;}
+        .btn-home:active { background: rgba(212,175,55,0.35); }
+        h1{text-align:center;color: var(--gold-light);margin:0;font-size:26px;font-weight:900;letter-spacing:6px;text-shadow:0 0 6px #d4af37, 0 0 16px rgba(212,175,55,0.7), 0 0 32px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.2);}
+        .top-bar { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 12px; cursor: pointer; padding: 6px 10px; border-radius: 6px; transition: background 0.2s; }
+        .top-bar:active { background: rgba(212,175,55,0.08); }
+        .vip-tag { color: var(--gold-color); }
+        .vip-tag span { color: #46c290; font-weight: bold; }
+        .uid-tag { color: var(--text-muted); }
+        .uid-tag span { color: #46c290; font-weight: bold; }
+        .box{max-width:720px;margin:0 auto}
+        .input-group { background: rgba(20, 34, 28, 0.8); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 12px; padding-top: 26px; margin-bottom: 12px; position: relative; }
+        .input-group::before { content: "经九天玄女娘娘流传后世，诸葛亮凭此料敌先机，起局一观，洞悉事藏暗机"; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: transparent; padding: 0 6px; font-size: clamp(8px, 2.6vw, 11px); font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", "Noto Sans SC", sans-serif; font-weight: 500; color: var(--gold-color); letter-spacing: 0.2px; white-space: nowrap; }
+        textarea{width:100%;height:180px;margin:3px 0;padding:8px;border-radius:4px;border:1px solid #2a4236;background: #0a1612;color: #e0e6e3;font-size:14px;resize:none;}
+        textarea::placeholder { color: #5a6b62; }
+        select{width:100%;padding:10px;border-radius:4px;border:1px solid #2a4236;background: #0a1612;color: #5a6b62;font-size:14px;margin-bottom:4px; appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, #d4af37 50%), linear-gradient(135deg, #d4af37 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 30px;}
+        select option { background: #0a1612; color: #e0e6e3; }
+        select option.placeholder-option { color: #5a6b62; }
+        select.has-value { color: #e0e6e3 !important; }
+        .btn-row { display: flex; gap: 8px; margin-bottom: 15px; }
+        button{padding:12px;border:none;border-radius:6px;font-size:15px;font-weight:bold;cursor:pointer;flex:1; letter-spacing: 1px; transition: all 0.3s; font-family: "Noto Serif SC", serif;}
+        .btn-primary{background: linear-gradient(180deg, #c92a2a 0%, #8f1d1d 100%); color: #f2d77f; border: 1px solid #8f1d1d; box-shadow: 0 4px 10px rgba(201,42,42,0.3);}
+        .btn-primary:active{transform: scale(0.98);}
+        .btn-secondary{background: #1a2f27; color: var(--gold-light); border: 1px solid #2a4236;}
+        .btn-share { background: linear-gradient(180deg, #e63946 0%, #c92a2a 100%); color: #fff; box-shadow: 0 4px 15px rgba(230,57,70,0.5); margin-top: 18px; animation: pulse-share 2s infinite; font-size: 16px; letter-spacing: 2px;}
+        .btn-share:active { transform: scale(0.98); }
+        /* 解锁按钮：金色渐变 + 锁图标 + 光泽动画 */
+        .unlock-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(180deg, #d4af37 0%, #b38f2b 100%);
+            color: #0b1310;
+            border: none; border-radius: 10px;
+            font-size: 16px; font-weight: bold;
+            cursor: pointer;
+            font-family: "Noto Serif SC", "Songti SC", serif;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            box-shadow: 0 4px 20px rgba(212,175,55,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .unlock-btn::after {
+            content: ""; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .unlock-btn:active { transform: scale(0.98); }
+        .unlock-btn .lock-icon {
+            width: 18px; height: 18px; flex-shrink: 0; position: relative; z-index: 2;
+        }
+        .unlock-btn .lock-icon path, .unlock-btn .lock-icon rect {
+            stroke: #0b1310; stroke-width: 2; fill: none;
+        }
+        .unlock-btn span { position: relative; z-index: 2; }
+        @keyframes pulse-share { 0%, 100% { box-shadow: 0 4px 15px rgba(230,57,70,0.5); } 50% { box-shadow: 0 4px 25px rgba(230,57,70,0.85); } }
+        .card{background: var(--panel-bg); padding:12px; border-radius:8px; margin-bottom:15px; line-height:1.7; border: 1px solid #2a4236; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        .card h3{color: var(--gold-color); margin-bottom:12px; font-size:16px; text-align: center; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 8px;}
+        .qimen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 8px; width: 100%; max-width: 420px; margin-left: auto; margin-right: auto; }
+        .gong-box { background: rgba(26,47,39,0.7); border: 1px solid rgba(212,175,55,0.2); border-radius: 4px; padding: 5px 6px; position: relative; aspect-ratio: 1 / 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 0; overflow: hidden; }
+        .gong-box::after { content: ""; position: absolute; top:0; left:0; right:0; bottom:0; border: 1px solid rgba(255,255,255,0.03); pointer-events: none;}
+        .men-ji { color: #46c290; font-weight: bold; } .men-xiong { color: #e63946; font-weight: bold; } .men-ping { color: #f4a261; font-weight: bold; }
+        .gong-box .gong-title { position: absolute; top: 2px; left: 4px; color: var(--gold-color); font-size: 10px; line-height: 1.15; }
+        .gong-box .gong-dir { color: var(--text-muted); font-size: 9px; }
+        .gong-box .shen { position: absolute; top: 2px; right: 4px; color: var(--gold-color); font-size: 10px; }
+        .gong-box .xing { color: #72d9b3; text-align: center; margin-top: 0; font-size: 12px; letter-spacing: 0.5px;}
+        .gong-box .men { text-align: center; font-size: 13px; margin: 0;}
+        .gong-box .tianpan { color: var(--gold-light); font-size: 16px; text-align: center; font-weight: bold; text-shadow: 0 0 5px rgba(212,175,55,0.5);}
+        .gong-box .dipan { color: #8a9b94; text-align: center; border-top: 1px dashed rgba(212,175,55,0.2); padding-top: 1px; font-size: 12px; }
+        .gong-box .yingan { color: #a0b2a8; text-align: center; font-size: 10px; border-top: 1px dotted rgba(255,255,255,0.08); padding-top: 1px; margin-top: 1px; }
+        .gong-box .shengke { color: var(--gold-light); text-align: center; font-size: 9px; opacity: 0.85; }
+        .markers { font-size: 8px; display: block; margin-top: 0; text-align: center; }
+        .marker-wang { color: #e63946; font-weight: bold; } .marker-kong { color: #555; text-decoration: line-through; } .marker-ma { color: #f4a261; } .marker-ge { color: var(--gold-color); display: block; font-size: 8px; text-align: center; margin-top: 1px; border-top: 1px dotted rgba(255,255,255,0.1); padding-top: 1px;} .marker-po { color: #e74c3c; display: block; font-size: 8px; text-align: center; }
+        .gong-box.gong-day { background: rgba(212,175,55,0.28) !important; border-color: #d4af37 !important; box-shadow: 0 0 8px rgba(212,175,55,0.4); }
+        .gong-box.gong-hour { background: rgba(70,194,144,0.22) !important; border-color: #46c290 !important; box-shadow: 0 0 8px rgba(70,194,144,0.3); }
+        .gong-box.gong-both { background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(70,194,144,0.22)) !important; border-color: #f4a261 !important; box-shadow: 0 0 10px rgba(244,162,97,0.4); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .grid-2 div { background: #0d1a15; padding: 8px; border-radius: 4px; text-align: center; font-size: 13px; border: 1px solid #1a2f27;}
+        .report-box { white-space: pre-wrap; line-height: 1.8; font-size: 14px; color: #d1e2db; }
+        .report-box-fade { white-space: pre-wrap; line-height: 1.8; font-size: 14px; color: #d1e2db; }
+        .report-fade-part { white-space: pre-wrap; line-height: 1.8; font-size: 14px; color: #d1e2db; -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.05) 90%, rgba(0,0,0,0) 100%); mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 20%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.05) 90%, rgba(0,0,0,0) 100%); }
+        .preview-suspense { text-align:center; color:var(--gold-color); font-size:13px; margin-top:15px; padding:14px 12px; background:rgba(212,175,55,0.08); border-radius:8px; border:1px dashed rgba(212,175,55,0.4); line-height:1.8; }
+        .preview-suspense .big { color: var(--gold-light); font-size: 15px; font-weight: bold; letter-spacing: 1px;}
+        .preview-suspense .sub { color: var(--text-muted); font-size: 12px; margin-top: 4px;}
+        .loading-box { text-align: center; padding: 50px 0; display: none;}
+        .taiji { width: 60px; height: 60px; border: 2px solid var(--gold-color); border-radius: 50%; margin: 0 auto 20px auto; position: relative; animation: rotate 3s linear infinite; }
+        .taiji::before { content: ""; position: absolute; width: 30px; height: 30px; background: var(--gold-color); border-radius: 50%; top: 0; left: 15px; }
+        .taiji::after { content: ""; position: absolute; width: 30px; height: 30px; background: var(--bg-color); border-radius: 50%; bottom: 0; left: 15px; }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .loading-text { color: var(--gold-color); letter-spacing: 4px; font-size: 16px; animation: pulse 1.5s infinite; }
+        .loading-verse { color: var(--gold-color); font-size: 12px; letter-spacing: 3px; margin-bottom: 22px; opacity: 0.9; font-weight: 500; text-shadow: 0 0 8px rgba(212,175,55,0.4); text-align: center; }
+        .loading-verse .dot { margin: 0 8px; opacity: 0.6; font-size: 10px; }
+        .loading-wrap-anim { position: relative; width: 150px; height: 150px; margin: 0 auto; }
+        .loading-ripple { position: absolute; top: 50%; left: 50%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 2px solid rgba(212,175,55,0.6); animation: rippleOut 3.6s ease-out infinite; pointer-events: none; }
+        .loading-ripple.r2 { animation-delay: 1.2s; }
+        .loading-ripple.r3 { animation-delay: 2.4s; }
+        @keyframes rippleOut { 0% { transform: scale(0.85); opacity: 0.9; border-width: 3px; box-shadow: 0 0 12px rgba(212,175,55,0.5); } 60% { opacity: 0.35; } 100% { transform: scale(2); opacity: 0; border-width: 1px; box-shadow: 0 0 0 rgba(212,175,55,0); } }
+        .loading-avatar { position: relative; width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 2px solid #d4af37; box-shadow: 0 0 30px rgba(212,175,55,0.55), 0 0 60px rgba(212,175,55,0.25), inset 0 0 25px rgba(0,0,0,0.7); animation: breathe 3s ease-in-out infinite; z-index: 3; }
+        .loading-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(212,175,55,0.55), 0 0 60px rgba(212,175,55,0.25), inset 0 0 25px rgba(0,0,0,0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(212,175,55,0.85), 0 0 85px rgba(212,175,55,0.4), inset 0 0 25px rgba(0,0,0,0.7); } }
+        .loading-glow { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); width: 140px; height: 20px; background: radial-gradient(ellipse at center, rgba(212,175,55,0.35) 0%, rgba(212,175,55,0) 70%); filter: blur(4px); z-index: 1; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: flex-end; z-index: 100; }
+        .modal-content { background: var(--panel-bg); width: 100%; max-width: 720px; border-radius: 16px 16px 0 0; padding: 18px; max-height: 90vh; overflow-y: auto; position: relative; border-top: 2px solid var(--gold-color); }
+        .modal-close { position: absolute; top: 12px; right: 12px; font-size: 22px; cursor: pointer; color: var(--gold-color); }
+        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+        .pay-card { background: #0d1a15; border: 1px solid #2a4236; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .pay-card.active { border-color: var(--gold-color); box-shadow: 0 0 10px rgba(212,175,55,0.3); background: #142b22; }
+        .pay-card .price { color: var(--gold-light); font-size: 18px; font-weight: bold; margin: 4px 0; } .pay-card .name { color: var(--text-main); font-size: 13px; } .pay-card .desc { color: var(--text-muted); font-size: 10px; margin-top: 4px; }
+        .pay-card.hot { position: relative; }
+        .pay-card.hot::before { content: "推荐"; position: absolute; top: -8px; right: 8px; background: linear-gradient(180deg, #e63946 0%, #c92a2a 100%); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 8px; letter-spacing: 1px; }
+        .qr-box { text-align: center; margin: 12px 0; }
+        .qr-box img { width: 160px; height: auto; max-height: 220px; border-radius: 8px; border: 2px solid var(--gold-color); }
+        .qr-box p { font-size: 12px; color: #a0b2a8; margin-top: 6px; }
+        .claim-btn { width: 100%; padding: 14px; margin-top: 10px; background: linear-gradient(180deg, #46c290 0%, #2c8a64 100%); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(70,194,144,0.4); animation: pulse-claim 2s infinite;}
+        .claim-btn:active { transform: scale(0.98); }
+        .claim-btn:disabled { opacity: 0.6; cursor: not-allowed; animation: none;}
+        @keyframes pulse-claim { 0%, 100% { box-shadow: 0 4px 15px rgba(70,194,144,0.4); } 50% { box-shadow: 0 4px 25px rgba(70,194,144,0.7); } }
+        .verify-box { margin-top: 12px; border-top: 1px dashed rgba(212,175,55,0.3); padding-top: 12px; }
+        .verify-box input { margin-bottom: 8px; } .verify-box button { background: var(--gold-color); color: #0b1310; font-weight: bold; }
+        .verify-msg { font-size: 12px; text-align: center; margin-top: 6px; }
+        .add-to-home { background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(70,194,144,0.08) 100%); border: 1px solid rgba(212,175,55,0.4); border-radius: 10px; padding: 14px 12px; margin-bottom: 15px; position: relative; }
+        .add-to-home .close-tip { position: absolute; top: 8px; right: 10px; color: var(--text-muted); font-size: 16px; cursor: pointer; line-height: 1; }
+        .add-to-home .tip-header { display: flex; align-items: center; margin-bottom: 8px; }
+        .add-to-home .tip-icon { font-size: 22px; margin-right: 8px; }
+        .add-to-home .tip-title { color: var(--gold-light); font-size: 15px; font-weight: bold; letter-spacing: 1px;}
+        .add-to-home .tip-desc { color: var(--text-muted); font-size: 12px; line-height: 1.6; margin-bottom: 10px;}
+        .add-to-home .tip-btn { display: block; width: 100%; padding: 10px; background: linear-gradient(180deg, #d4af37 0%, #b38f2b 100%); color: #0b1310; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; letter-spacing: 1px;}
+        .step-modal .modal-content { max-width: 420px; }
+        .step-modal h3 { color: var(--gold-color); text-align: center; font-size: 18px; margin-bottom: 15px;}
+        .step-modal .step-item { display: flex; align-items: flex-start; margin-bottom: 14px; }
+        .step-modal .step-num { flex-shrink: 0; width: 26px; height: 26px; background: var(--gold-color); color: #0b1310; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; margin-right: 10px;}
+        .step-modal .step-text { color: var(--text-main); font-size: 14px; line-height: 1.6; padding-top: 3px;}
+        .step-modal .step-text strong { color: var(--gold-light); }
+        .step-modal .know-btn { width: 100%; padding: 12px; background: var(--gold-color); color: #0b1310; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .custom-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 2000; padding: 30px;}
+        .custom-alert .alert-box { background: linear-gradient(180deg, #142b22 0%, #0b1310 100%); border: 1px solid var(--gold-color); border-radius: 14px; padding: 24px 20px; max-width: 340px; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(212,175,55,0.3); position: relative; animation: alertIn 0.3s ease-out;}
+        @keyframes alertIn { from { opacity: 0; transform: scale(0.9) translateY(20px);} to { opacity: 1; transform: scale(1) translateY(0);} }
+        .custom-alert .alert-title { color: var(--gold-color); font-size: 17px; letter-spacing: 3px; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(212,175,55,0.25); font-weight: bold; text-shadow: 0 0 10px rgba(212,175,55,0.4);}
+        .custom-alert .alert-title::before { content: "◈ "; opacity: 0.7; }
+        .custom-alert .alert-title::after { content: " ◈"; opacity: 0.7; }
+        .custom-alert .alert-msg { color: var(--text-main); font-size: 15px; line-height: 1.8; margin-bottom: 20px; letter-spacing: 0.5px;}
+        .custom-alert .alert-msg .hint-line { display: block; font-size: 13px; color: var(--text-muted); margin-top: 4px;}
+        .custom-alert .alert-btn { width: 100%; padding: 12px; background: linear-gradient(180deg, #d4af37 0%, #b38f2b 100%); color: #0b1310; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; letter-spacing: 2px; box-shadow: 0 4px 12px rgba(212,175,55,0.4);}
+        .custom-alert .alert-btn:active { transform: scale(0.98); }
+        .consult-float { position: fixed; right: 10px; top: 8px; width: 48px; height: 48px; background: linear-gradient(135deg, #d4af37 0%, #b38f2b 100%); border-radius: 50%; box-shadow: 0 4px 12px rgba(212,175,55,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; z-index: 999; transition: all 0.3s; border: 2px solid rgba(255,255,255,0.2);}
+        .consult-float:active { transform: scale(0.92); }
+        .consult-float .cf-icon { font-size: 18px; line-height: 1; }
+        .consult-float .cf-text { font-size: 9px; color: #0b1310; font-weight: bold; margin-top: 1px; letter-spacing: 0.3px;}
+        .consult-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 2100; padding: 20px;}
+        .consult-modal .cm-box { background: linear-gradient(180deg, #142b22 0%, #0b1310 100%); border: 1px solid var(--gold-color); border-radius: 16px; padding: 24px 20px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(212,175,55,0.35); position: relative; max-height: 90vh; overflow-y: auto;}
+        .consult-modal .cm-close { position: absolute; top: 10px; right: 14px; font-size: 22px; cursor: pointer; color: var(--gold-color); line-height: 1;}
+        .consult-modal .cm-title { color: var(--gold-color); font-size: 18px; letter-spacing: 3px; margin-bottom: 6px; font-weight: bold;}
+        .consult-modal .cm-subtitle { color: var(--text-muted); font-size: 12px; margin-bottom: 14px;}
+        .consult-modal .cm-icon-circle { width: 56px; height: 56px; border-radius: 50%; background: rgba(212,175,55,0.15); border: 2px solid var(--gold-color); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; font-size: 26px; }
+        .consult-modal .cm-form { text-align: left; margin-top: 5px;}
+        .consult-modal .cm-field { margin-bottom: 12px;}
+        .consult-modal .cm-field label { display: block; color: var(--gold-color); font-size: 12px; margin-bottom: 6px; letter-spacing: 1px;}
+        .consult-modal .cm-field input, .consult-modal .cm-field textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #2a4236; background: #0a1612; color: var(--text-main); font-size: 14px; resize: none; font-family: inherit;}
+        .consult-modal .cm-field textarea { height: 100px; line-height: 1.6;}
+        .consult-modal .cm-field input:focus, .consult-modal .cm-field textarea:focus { outline: none; border-color: var(--gold-color);}
+        .consult-modal .cm-submit { width: 100%; padding: 12px; background: linear-gradient(180deg, #d4af37 0%, #b38f2b 100%); color: #0b1310; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; letter-spacing: 2px; margin-bottom: 10px;}
+        .consult-modal .cm-submit:disabled { opacity: 0.6; }
+        .consult-modal .cm-tip { color: var(--text-muted); font-size: 11px; margin-top: 6px; line-height: 1.6; text-align: center;}
+    
+        .title-wrap{text-align:center;margin-bottom:14px;}
+        .title-wrap h1{display:inline-block;}
+        .title-wrap .taiji-svg{display:inline-block;width:26px;height:26px;vertical-align:middle;margin:0 12px;filter:drop-shadow(0 0 6px rgba(212,175,55,0.8));animation:taiji-spin 12s linear infinite;}
+        @keyframes taiji-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+        .btn-consult{background:linear-gradient(180deg,#2c705f 0%,#1a4a3d 100%);color:var(--gold-light);border:1px solid #1a4a3d;box-shadow:0 4px 10px rgba(44,112,95,0.3);}
+        .btn-consult:active{transform:scale(0.98);}
+
+        /* ============ 九宫格新版（黑体 · 紧凑 · 带标签） ============ */
+        /* ===== 奇门九宫 · 美化版 ===== */
+        .qimen-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 6px; width: 100%; max-width: 420px; margin-left: auto; margin-right: auto; border: 1px solid rgba(212,175,55,0.45); border-radius: 6px; overflow: hidden; background: rgba(15,28,22,0.3); }
+        .gong-box {
+            background: transparent;
+            border-right: 1px solid rgba(212,175,55,0.20);
+            border-bottom: 1px solid rgba(212,175,55,0.20);
+            padding: 6px 5px 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            min-width: 0;
+            width: 100%;
+            aspect-ratio: auto !important;
+            height: auto !important;
+            overflow: visible;
+        }
+        .gong-box:nth-child(3n) { border-right: none; }
+        .gong-box:nth-child(n+7) { border-bottom: none; }
+        .gong-box .gong-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+        .gong-box .gong-name { color: var(--gold-color); font-size: 12px; font-weight: 700; line-height: 1.1; }
+        .gong-box .gong-meta { color: var(--text-muted); font-size: 10px; line-height: 1.2; }
+        .gong-box .gong-shen { color: var(--gold-light); font-size: 12px; font-weight: 600; line-height: 1.1; }
+        .gong-box .info-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11.5px; line-height: 1.35; padding: 0 2px; min-width: 0; gap: 4px; }
+        .gong-box .info-row .lbl { color: var(--text-muted); font-size: 10px; flex-shrink: 0; }
+        .gong-box .info-row .val { font-weight: 700; text-align: right; flex: 1; margin-left: 2px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .gong-box .val.shen { color: var(--gold-light); }
+        .gong-box .val.xing { color: #72d9b3; }
+        .gong-box .val.tiangan { color: var(--gold-light); font-size: 14px; letter-spacing: 0.5px; line-height: 1.15; }
+        .gong-box .val.dizhi { color: #c8d6cd; font-size: 11px; }
+        .gong-box .men-ji { color: #46c290 !important; font-weight: 700; }
+        .gong-box .men-xiong { color: #e63946 !important; font-weight: 700; }
+        .gong-box .men-ping { color: #f4a261 !important; font-weight: 700; }
+        .gong-box .status-row { margin-top: auto; font-size: 10px; text-align: left; padding: 2px 2px 0; color: #e63946; font-weight: 600; line-height: 1.3; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+        .gong-box .status-row .lbl { color: #5a6b62; font-size: 9px; margin-right: 2px; }
+        .gong-box .marker-wang { color: #e63946; font-weight: 700; }
+        .gong-box .marker-kong { color: #777; text-decoration: line-through; }
+        .gong-box .marker-ma { color: #f4a261; }
+        .gong-box .marker-ge { color: #d4af37; }
+        .gong-box .marker-po { color: #e74c3c; }
+        .gong-box.gong-day {
+            background: rgba(212,175,55,0.14) !important;
+            box-shadow: inset 0 0 0 2px #d4af37 !important;
+        }
+        .gong-box.gong-day::before {
+            content: "日"; position: absolute; top: 3px; left: 3px;
+            width: 14px; height: 14px; line-height: 14px; text-align: center;
+            font-size: 9px; font-weight: bold; color: #0b1310; background: #d4af37;
+            border-radius: 50%; z-index: 3;
+        }
+        .gong-box.gong-hour {
+            background: rgba(70,194,144,0.14) !important;
+            box-shadow: inset 0 0 0 2px #46c290 !important;
+        }
+        .gong-box.gong-hour::before {
+            content: "时"; position: absolute; top: 3px; left: 3px;
+            width: 14px; height: 14px; line-height: 14px; text-align: center;
+            font-size: 9px; font-weight: bold; color: #0b1310; background: #46c290;
+            border-radius: 50%; z-index: 3;
+        }
+        .gong-box.gong-both {
+            background: linear-gradient(135deg, rgba(212,175,55,0.20), rgba(70,194,144,0.15)) !important;
+            box-shadow: inset 0 0 0 2px #f4a261 !important;
+        }
+        .gong-box.gong-both::before {
+            content: "日时"; position: absolute; top: 3px; left: 3px;
+            height: 14px; line-height: 14px; padding: 0 5px;
+            font-size: 8px; font-weight: bold; color: #0b1310; background: #f4a261;
+            border-radius: 7px; z-index: 3;
+        }
+        /* removed */
+
+        /* ===== 四柱合并 ===== */
+        .sizhu-line {
+            display: block;
+            background: #0d1a15;
+            border: 1px solid #1a2f27;
+            border-radius: 8px;
+            padding: 12px 10px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .sizhu-line .sz-txt {
+            color: var(--gold-light);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            line-height: 1.7;
+            margin-bottom: 6px;
+        }
+        .sizhu-line .sz-txt b { color: var(--gold-color); font-weight: 700; margin-right: 3px; }
+        .sizhu-line .sz-txt span.sep { color: #4a5a52; margin: 0 6px; }
+        .sizhu-line .sz-txt span.v { color: #e0e6e3; }
+
+        .gong-box .gong-top { display: flex; justify-content: space-between; align-items: center; line-height: 1.2; margin-bottom: 1px; }
+        .gong-box .gong-top .center-mark { flex: 1; text-align: center; line-height: 1; }
+        .gong-box .gong-top .mark-tag { display: inline-block; width: 13px; height: 13px; line-height: 13px; text-align: center; border-radius: 50%; font-size: 9px; font-weight: 700; color: #0b1310; margin: 0 1px; vertical-align: middle; }
+        .gong-box .gong-top .mark-day { background: #d4af37; }
+        .gong-box .gong-top .mark-hour { background: #46c290; }
+        .gong-box .gong-top .gong-shen { color: var(--gold-light); font-size: 12px; font-weight: 600; }
+        .gong-box .gong-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 10px; line-height: 1.35; color: var(--text-muted); margin-bottom: 2px; padding: 0 1px; }
+        .gong-box .gong-meta .gong-status { font-size: 10px; font-weight: 700; color: #e63946; }
+        .gong-box .gong-meta .gong-status .marker-kong { color: #777; text-decoration: line-through; }
+        .gong-box .gong-meta .gong-status .marker-ma { color: #f4a261; }
+        .gong-box .gong-meta .gong-status .marker-ge { color: #d4af37; }
+        .gong-box .gong-meta .gong-status .marker-po { color: #e74c3c; }
+    
+        /* 隐藏左上角重复的日/时标记（只保留中间那个） */
+        .gong-box.gong-day::before,
+        .gong-box.gong-hour::before,
+        .gong-box.gong-both::before { display: none !important; }
+    </style>
+</head>
+<body>
+    <button class="btn-home" onclick="location.href='/index.html'">← 首页</button>
+    
+    <div class="box">
+        <div class="title-wrap"><h1>奇门遁甲<svg class="taiji-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="#d4af37"/>
+          <path d="M50,2 A48,48 0 0,1 50,98 A24,24 0 0,1 50,50 A24,24 0 0,0 50,2 Z" fill="#0b1310"/>
+          <circle cx="50" cy="26" r="7" fill="#0b1310"/>
+          <circle cx="50" cy="74" r="7" fill="#d4af37"/>
+          <circle cx="50" cy="50" r="48" fill="none" stroke="#f2d77f" stroke-width="1.5"/>
+        </svg>上古秘术</h1></div>
+        <div class="top-bar" onclick="location.href='/profile.html'">
+            <div class="vip-tag" id="vipTag">身份：<span>正在初始化...</span></div>
+            <div class="uid-tag">我的ID：<span id="myUserId">—</span> <span style="color:var(--gold-color);font-size:11px;">▶</span></div>
+        </div>
+        <div class="input-group">
+            <textarea id="questionInput" placeholder="请在此输入你要起局预测的具体问题"></textarea>
+            <select id="birthYearSelect">
+                <option value="" class="placeholder-option" selected>测终身、长期、大事、婚姻选填出生年命</option>          
+  </select>
+        </div>
+        <div class="btn-row">
+            <button id="submitBtn" class="btn-primary">立即起局</button>
+            <button class="btn-consult" onclick="openConsult()">在线咨询</button>
+        </div>
+        <div class="add-to-home" id="addToHomeCard">
+            <span class="close-tip" onclick="closeAddToHome()">×</span>
+            <div class="tip-header">
+                <span class="tip-icon">📱</span>
+                <span class="tip-title">添加到桌面 · 像App一样使用</span>
+            </div>
+            <div class="tip-desc">下次直接点桌面图标进入，无需输入网址，更方便。</div>
+            <button class="tip-btn" onclick="showAddToHomeSteps()">查看保存方法 →</button>
+        </div>
+        <div class="card" id="baziCard" style="display:none;"><h3>【四柱与盘面】</h3><div class="sizhu-line" id="baziGrid"></div><div id="panInfoText" style="margin-top:4px; color:#72d9b3; text-align:center; font-size: 12.5px; line-height:1.9;"></div></div>
+        <div class="card" id="gridCard" style="display:none;"><div class="qimen-grid" id="qimenGrid"></div></div>
+        <div class="card" id="loadingCard" style="display:none;"><div class="loading-box" style="display:block;">
+            <div class="loading-verse">九宫排天地<span class="dot">·</span>掌中定乾坤</div>
+            <div class="loading-wrap-anim">
+                <div class="loading-glow"></div>
+                <div class="loading-ripple"></div>
+                <div class="loading-ripple r2"></div>
+                <div class="loading-ripple r3"></div>
+                <div class="loading-avatar"><img src="/share-cover.jpg" alt="玄女"></div>
+            </div>
+            <div class="loading-text">正在奇门起局，请稍候...</div>
+        </div></div>
+        <div class="card" id="reportPreviewCard" style="display:none;">
+            <h3>【落九宫 · 天垂象】</h3>
+            <div class="report-preview-wrapper">
+                <div id="reportPreview"></div>
+                <div class="report-fade"></div>
+            </div>
+            <button class="unlock-btn" onclick="location.href='/profile.html'">
+                <svg class="lock-icon" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M 8 11 V 7 a 4 4 0 0 1 8 0 v 4"/><circle cx="12" cy="16" r="1.5" fill="#0b1310"/></svg>
+                <span>解锁查看余下40%关键建议</span>
+            </button>
+        </div>
+        <div class="card" id="reportFullCard" style="display:none;">
+            <h3>【落九宫 · 天垂象】</h3>
+            <div id="reportFull" class="report-box"></div>
+            <button class="btn-primary btn-share" onclick="shareToFriend()">🎁 挺准！分享好友赚佣金</button>
+        </div>
+        <button id="resetBtn" class="btn-secondary" style="display:none; width:100%; margin-top:8px;">返回首页 · 重新起局</button>
+    </div>
+    <div class="modal" id="payModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('payModal').style.display='none'">&times;</span>
+            <h3 style="color: var(--gold-color); text-align: center; margin-bottom: 8px;">【解锁天机】</h3>
+            <p style="text-align: center; color: var(--text-muted); font-size: 12px;">请选择您的解锁方式</p>
+            <div class="pay-grid">
+                <div class="pay-card active" onclick="selectPay(this, 'month')"><div class="name">包月会员</div><div class="price">¥58</div><div class="desc">30天内无限次</div></div>
+                <div class="pay-card" onclick="selectPay(this, 'quarter')"><div class="name">季度会员</div><div class="price">¥128</div><div class="desc">90天内无限次</div></div>
+                <div class="pay-card" onclick="selectPay(this, 'half')"><div class="name">半年会员</div><div class="price">¥218</div><div class="desc">180天内无限次</div></div>
+                <div class="pay-card" onclick="selectPay(this, 'year')"><div class="name">包年会员</div><div class="price">¥365</div><div class="desc">365天内无限次</div></div>
+                <div class="pay-card hot" style="grid-column: span 2;" onclick="selectPay(this, 'single')"><div class="name">单次解锁 · 体验首选</div><div class="price">¥9.9</div><div class="desc">本次报告永久有效，看完再决定是否升级会员</div></div>
+            </div>
+            <div class="qr-box">
+                <img src="wechat_pay.jpg" alt="微信收款码">
+                <p id="payTip" style="color: var(--gold-color); font-size: 12px; margin-top: 6px;">请使用微信扫码支付</p>
+                <button class="claim-btn" id="claimBtn" onclick="claimCard()">✅ 我已付款 · 立即领取卡密</button>
+                <button onclick="openConsult()" style="width: 100%; padding: 10px; margin-top: 8px; background: #2c705f; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">💬 遇到问题？留言给客服</button>
+            </div>
+            <div class="verify-box">
+                <p style="color: var(--gold-color); font-size: 12px; margin-bottom: 6px;">输入卡密解锁：</p>
+                <input type="text" id="cardKeyInput" placeholder="请输入您的解锁卡密">
+                <button onclick="verifyCardKey()" style="width: 100%; padding: 10px; border-radius: 6px; border: none; cursor: pointer;">验证并解锁</button>
+                <div id="verifyMsg" class="verify-msg"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal step-modal" id="addToHomeModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('addToHomeModal').style.display='none'">&times;</span>
+            <h3>📱 添加到桌面教程</h3>
+            <div id="stepContent"></div>
+            <button class="know-btn" onclick="document.getElementById('addToHomeModal').style.display='none'">我知道了</button>
+        </div>
+    </div>
+    <div class="consult-modal" id="consultModal">
+        <div class="cm-box">
+            <span class="cm-close" onclick="document.getElementById('consultModal').style.display='none'">&times;</span>
+            <div class="cm-title">在线留言</div>
+            <div class="cm-subtitle">写下你的问题，客服会尽快回复你</div>
+            <div class="cm-icon-circle">📩</div>
+            <div class="cm-form">
+                <div class="cm-field">
+                    <label>联系方式（微信/手机，选填）</label>
+                    <input type="text" id="cmContact" placeholder="方便客服回复你">
+                </div>
+                <div class="cm-field">
+                    <label>留言内容 <span style="color:#c92a2a;">*</span></label>
+                    <textarea id="cmContent" placeholder="请描述你的问题，例如：已支付但未收到卡密、想咨询报告解读等" maxlength="500"></textarea>
+                </div>
+                <button class="cm-submit" id="cmSubmitBtn" onclick="submitMessage()">📨 发送留言</button>
+                <div class="cm-tip">留言将即时推送到客服微信<br>如急需，也可添加客服微信：wxid_2zncjoy5pkj012</div>
+            </div>
+        </div>
+    </div>
+    <div class="custom-alert" id="customAlert">
+        <div class="alert-box">
+            <div class="alert-title">温馨提示</div>
+            <div class="alert-msg" id="customAlertMsg"></div>
+            <button class="alert-btn" onclick="document.getElementById('customAlert').style.display='none'">确 定</button>
+        </div>
+    </div>
+
+    <script>
+function cleanReport(text){
+  if(!text) return "";
+  // ① 删掉【五行核对清单】整段
+  text = text.replace(/【五行核对清单】[\s\S]*?(?=【一、|【盘面信息|【断局|【二、|$)/g, "");
+  // ② 删掉所有行首符号
+  text = text.split("\n").map(function(line){
+    return line.replace(/^[\s\u3000]*[-\u00b7\u2022\u25c6\u25cf\u25cb\u203b*#>+\uff5e~]+[\u3000 ]*/g, "");
+  }).join("\n");
+  // ③ 去掉开头的空行
+  text = text.replace(/^\s*\n+/, "");
+  return text;
+}
+
+        let currentFullReport = "";
+        let isUnlocked = false;
+        let currentUserId = null;
+        let currentInviteCode = null;
+
+        function showAlert(msg, hint) {
+            let html = msg;
+            if (hint) html += '<span class="hint-line">' + hint + '</span>';
+            document.getElementById('customAlertMsg').innerHTML = html;
+            document.getElementById('customAlert').style.display = 'flex';
+        }
+
+        function openConsult() { document.getElementById('consultModal').style.display = 'flex'; }
+
+        function submitMessage() {
+            const contact = document.getElementById('cmContact').value.trim();
+            const content = document.getElementById('cmContent').value.trim();
+            if (!content || content.length < 2) { showAlert("请填写留言内容", "（至少2个字）"); return; }
+            const btn = document.getElementById('cmSubmitBtn');
+            btn.disabled = true; btn.innerText = '📨 发送中...';
+            fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: currentUserId, contact, content }) })
+            .then(res => res.json())
+            .then(res => {
+                if (res.code === 200) {
+                    document.getElementById('cmContent').value = '';
+                    document.getElementById('cmContact').value = '';
+                    document.getElementById('consultModal').style.display = 'none';
+                    showAlert("留言已发送成功", "客服会尽快通过您留下的联系方式回复您");
+                } else { showAlert("发送失败", res.msg || "请稍后重试"); }
+            })
+            .catch(err => { showAlert("网络错误", "请稍后重试"); })
+            .finally(() => { btn.disabled = false; btn.innerText = '📨 发送留言'; });
+        }
+
+        function claimCard() {
+            if (!currentUserId) { showAlert("请刷新页面后重试"); return; }
+            const firstClick = sessionStorage.getItem('qimen_claim_first_click');
+            if (!firstClick) {
+                sessionStorage.setItem('qimen_claim_first_click', '1');
+                showAlert("请先扫码支付", "支付成功后，再次点击「我已付款」按钮即可自动领取卡密");
+                return;
+            }
+            const btn = document.getElementById('claimBtn');
+            btn.disabled = true; btn.innerText = '⏳ 正在领取...';
+            fetch('/api/card/pool-claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: currentUserId }) })
+            .then(res => res.json())
+            .then(res => {
+                if (res.code === 200) {
+                    document.getElementById('cardKeyInput').value = res.data.cardKey;
+                    btn.innerText = '✅ 领取成功！正在解锁...';
+                    showAlert("卡密领取成功", "正在为您自动解锁...");
+                    setTimeout(() => {
+                        document.getElementById('payModal').style.display = 'none';
+                        verifyCardKey();
+                        btn.disabled = false; btn.innerText = '✅ 我已付款 · 立即领取卡密';
+                    }, 800);
+                } else {
+                    showAlert("领取失败", res.msg || "请联系客服");
+                    btn.disabled = false; btn.innerText = '✅ 我已付款 · 立即领取卡密';
+                }
+            })
+            .catch(err => { showAlert("网络错误", "请稍后重试或联系客服"); btn.disabled = false; btn.innerText = '✅ 我已付款 · 立即领取卡密'; });
+        }
+
+        (function initBirthYearSelect() {
+            const sel = document.getElementById('birthYearSelect');
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear - 100;
+            const shengXiao = ['猴','鸡','狗','猪','鼠','牛','虎','兔','龙','蛇','马','羊'];
+            for (let y = currentYear; y >= startYear; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y + ' 年出生（属' + shengXiao[y % 12] + '）';
+                if (y === 1980) opt.setAttribute('data-default', 'true');
+                sel.appendChild(opt);
+            }
+            sel.addEventListener('focus', function() {
+                const target = this.querySelector('option[data-default="true"]');
+                if (target) { setTimeout(() => { target.scrollIntoView({ block: 'center' }); }, 50); }
+            });
+        })();
+
+        function showAddToHomeSteps() {
+            const ua = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(ua);
+            const isAndroid = /android/.test(ua);
+            const isWechat = ua.indexOf('micromessenger') !== -1;
+            let html = '';
+            if (isWechat) {
+                html = '<div class="step-item"><div class="step-num">1</div><div class="step-text">点击右上角 <strong>「···」</strong> 菜单</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text">选择 <strong>「在浏览器中打开」</strong></div></div><div class="step-item"><div class="step-num">3</div><div class="step-text">进入浏览器后，再次点击菜单，选择 <strong>「添加到主屏幕」</strong></div></div>';
+            } else if (isIOS) {
+                html = '<div class="step-item"><div class="step-num">1</div><div class="step-text">点击底部 <strong>「分享」</strong> 按钮 <strong>(↑)</strong></div></div><div class="step-item"><div class="step-num">2</div><div class="step-text">下滑找到 <strong>「添加到主屏幕」</strong></div></div><div class="step-item"><div class="step-num">3</div><div class="step-text">点击右上角 <strong>「添加」</strong>，即可在桌面看到图标</div></div>';
+            } else if (isAndroid) {
+                html = '<div class="step-item"><div class="step-num">1</div><div class="step-text">点击右上角 <strong>「⋮」</strong> 菜单</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text">选择 <strong>「添加到主屏幕」</strong> 或 <strong>「安装应用」</strong></div></div><div class="step-item"><div class="step-num">3</div><div class="step-text">确认添加，即可在桌面看到图标</div></div>';
+            } else {
+                html = '<div class="step-item"><div class="step-num">1</div><div class="step-text">打开浏览器菜单（通常在右上角）</div></div><div class="step-item"><div class="step-num">2</div><div class="step-text">选择 <strong>「添加到主屏幕」</strong> 或 <strong>「安装」</strong></div></div><div class="step-item"><div class="step-num">3</div><div class="step-text">确认后，桌面会出现奇门遁甲图标</div></div>';
+            }
+            document.getElementById('stepContent').innerHTML = html;
+            document.getElementById('addToHomeModal').style.display = 'flex';
+        }
+
+        function closeAddToHome() {
+            document.getElementById('addToHomeCard').style.display = 'none';
+            localStorage.setItem('qimen_hide_add_home', Date.now());
+        }
+
+        function getRefCode() { return new URLSearchParams(window.location.search).get('ref') || null; }
+
+function getDeviceId() {
+    let cached = localStorage.getItem('qimen_device_id');
+    if (cached && cached.indexOf('fp_') === 0) return cached;
+    const parts = [
+        navigator.userAgent,
+        navigator.language,
+        screen.width + 'x' + screen.height,
+        screen.colorDepth,
+        new Date().getTimezoneOffset(),
+        navigator.hardwareConcurrency || '',
+        navigator.platform || ''
+    ];
+    let hash = 0;
+    const str = parts.join('|');
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    const id = 'fp_' + Math.abs(hash).toString(36);
+    localStorage.setItem('qimen_device_id', id);
+    return id;
+}
+
+        function initUser() {
+            const deviceId = getDeviceId();
+            const ref = getRefCode();
+            fetch("/api/user/init", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deviceId, ref }) })
+            .then(res => res.json())
+            .then(res => {
+                if (res.code === 200) {
+                    currentUserId = res.data.userId;
+                    isUnlocked = res.data.isVip;
+                    currentInviteCode = res.data.inviteCode;
+                    if (res.data.inviteCode) { localStorage.setItem('qimen_invite_code', res.data.inviteCode); }
+                    document.getElementById('myUserId').innerText = res.data.userCode || ('#' + res.data.userId);
+                    updateVipTag();
+                }
+            })
+            .catch(err => console.error("初始化用户失败", err));
+        }
+
+        function updateVipTag() {
+            const vipTag = document.getElementById("vipTag");
+            if (isUnlocked) {
+                fetch(`/api/user/status?userId=${currentUserId}`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.code === 200 && res.data.isVip) {
+                        const daysLeft = Math.ceil((res.data.vipExpire - Date.now()) / (24 * 60 * 60 * 1000));
+                        vipTag.innerHTML = `身份：<span>尊贵会员 ${daysLeft}天</span>`;
+                    } else { vipTag.innerHTML = `身份：<span>普通访客</span>`; }
+                });
+            } else { vipTag.innerHTML = `身份：<span>普通访客</span>`; }
+        }
+
+        initUser();
+
+        if (new URLSearchParams(window.location.search).get('open_pay') === '1') {
+            setTimeout(function() { document.getElementById('payModal').style.display = 'flex'; }, 800);
+        }
+
+        function checkDevice() {
+            const ua = navigator.userAgent.toLowerCase();
+            const payTip = document.getElementById("payTip");
+            if (ua.indexOf("micromessenger") !== -1) { payTip.innerHTML = "长按上方二维码识别付款"; }
+            else if (ua.indexOf("mobile") !== -1) { payTip.innerHTML = "请截图保存上方二维码，再打开微信扫一扫，从相册选取"; }
+            else { payTip.innerHTML = "请使用手机微信扫一扫付款"; }
+        }
+        checkDevice();
+
+        function shareToFriend() { window.location.href = '/poster.html'; }
+
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            const question = document.getElementById("questionInput").value.trim();
+            const birthYear = document.getElementById("birthYearSelect").value || null;
+            if (!question || question.length < 5) { showAlert("请输入你要预测的具体问题", "（不能少于5个字）"); return; }
+
+            document.getElementById("baziCard").style.display = "none";
+            document.getElementById("gridCard").style.display = "none";
+            document.getElementById("reportPreviewCard").style.display = "none";
+            document.getElementById("reportFullCard").style.display = "none";
+            document.getElementById("resetBtn").style.display = "none";
+            document.getElementById("addToHomeCard").style.display = "none";
+            document.getElementById("loadingCard").style.display = "block";
+
+            fetch("/api/qimen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, birthYear, userId: currentUserId }) })
+            .then(res => res.json())
+            .then(res => {
+                document.getElementById("loadingCard").style.display = "none";
+                if (res.code !== 200) { document.getElementById("reportPreviewCard").style.display = "block"; document.getElementById("reportPreview").innerHTML = `<span style="color:#ff6b6b;">❌ 错误：${res.msg || "未知错误"}</span>`; return; }
+                const data = res.data || {};
+                const bazi = data.bazi || {};
+                const report = data.report || "未能生成解读报告";
+                const panInfo = data.panInfo || {};
+                const panData = data.panData || {};
+                currentFullReport = report;
+
+                document.getElementById("baziCard").style.display = "block";
+                document.getElementById("baziGrid").innerHTML = `<div class="sz-txt"><b>年柱</b><span class="v">${bazi.year || "未计算"}</span><span class="sep">·</span><b>月柱</b><span class="v">${bazi.month || "未计算"}</span><span class="sep">·</span><b>日柱</b><span class="v">${bazi.day || "未计算"}</span><span class="sep">·</span><b>时柱</b><span class="v">${bazi.hour || "未计算"}</span></div>`;
+                // 判断是否伏吟局（时干 == 旬首隐干）
+                let isFuyin = false;
+                const xunMapF = {'甲子':'戊','甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸'};
+                const xunYin = xunMapF[panInfo.xunShou] || '';
+                let hourGanF = bazi.hour ? bazi.hour[0] : '';
+                if (hourGanF === '甲' && bazi.hour) hourGanF = xunMapF[bazi.hour] || '戊';
+                if (hourGanF && xunYin && hourGanF === xunYin) isFuyin = true;
+                const fuyinStr = isFuyin ? ' <span style="color:#e63946;font-weight:bold;">⚡伏吟局（天地同盘）</span>' : '';
+                let panHtml = `节气：${panInfo.jieQi || ""} | 时辰：${panInfo.timeGanZhi || ""} | ${panInfo.dun || ""}${panInfo.ju || ""}局 | 旬首：${panInfo.xunShou || ""}<br>旬空：${panInfo.kongWang || ""} | 驿马：${panInfo.maXing || ""}${fuyinStr}`;
+                if (panInfo.yearZhi) panHtml += `<br><span style="color:var(--gold-light);">年命：${panInfo.yearZhi} | 年命落宫：${panInfo.mingGong}宫</span>`;
+                document.getElementById("panInfoText").innerHTML = panHtml;
+
+                const layout = [4,9,2,3,5,7,8,1,6];
+                const jiMen = ["开门","休门","生门"]; const xiongMen = ["死门","惊门","伤门"];
+                const xunMap = {'甲子':'戊','甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸'};
+        let dayGan = bazi.day ? bazi.day[0] : '';
+        if (dayGan === '甲' && bazi.day) dayGan = xunMap[bazi.day] || '戊';
+                let hourGan = bazi.hour ? bazi.hour[0] : '';
+        if (hourGan === '甲' && bazi.hour) hourGan = xunMap[bazi.hour] || '戊';
+                let dayGong = null, hourGong = null;
+                for (let g in panData) {
+                    if (panData[g].tianPan === dayGan) dayGong = g;
+                    if (panData[g].tianPan === hourGan) hourGong = g;
+                }
+                // 【兜底】天盘找不到时，查地盘（处理中宫/伏吟等特殊情况）
+                if (dayGong === null) {
+                    for (let g in panData) {
+                        if (panData[g].diPan === dayGan) { dayGong = g; break; }
+                    }
+                }
+                if (hourGong === null) {
+                    for (let g in panData) {
+                        if (panData[g].diPan === hourGan) { hourGong = g; break; }
+                    }
+                }
+
+                const gridHtml = layout.map(g => {
+                    let d = panData[g] || {};
+                    let menClass = "men-ping";
+                    if (d.baMen) { if (jiMen.includes(d.baMen)) menClass = "men-ji"; else if (xiongMen.includes(d.baMen)) menClass = "men-xiong"; }
+                    let markers = [];
+                    if (d.wangShuai) markers.push(`<span class="marker-wang">${d.wangShuai}</span>`);
+                    if (d.kongWang) markers.push(`<span class="marker-kong">空亡</span>`);
+                    if (d.maXing) markers.push(`<span class="marker-ma">驿马</span>`);
+                    let markerStr = markers.length > 0 ? `<span class="markers">${markers.join(" ")}</span>` : "";
+                    let geJuStr = d.geJu ? `<span class="marker-ge">${d.geJu}</span>` : "";
+                    let menPoStr = d.menPo ? `<span class="marker-po">门迫</span>` : "";
+                    const isDay = String(g) === String(dayGong);
+                    const isHour = String(g) === String(hourGong);
+                    let bgClass = '';
+                    if (isDay && isHour) bgClass = 'gong-both';
+                    else if (isDay) bgClass = 'gong-day';
+                    else if (isHour) bgClass = 'gong-hour';
+                    const zhiMap = {1:'子', 2:'未申', 3:'卯', 4:'辰巳', 5:'—', 6:'戌亥', 7:'酉', 8:'丑寅', 9:'午'};
+                    let statusInner = '';
+                    let statusArr = [];
+                    if (d.wangShuai) statusArr.push(`<span class="marker-wang">${d.wangShuai}</span>`);
+                    if (d.kongWang) statusArr.push(`<span class="marker-kong">空亡</span>`);
+                    if (d.maXing) statusArr.push(`<span class="marker-ma">驿马</span>`);
+                    if (d.geJu) statusArr.push(`<span class="marker-ge">${d.geJu}</span>`);
+                    if (d.menPo) statusArr.push(`<span class="marker-po">门迫</span>`);
+                    statusInner = statusArr.length > 0 ? `<span class="lbl">状态</span>${statusArr.join(" · ")}` : `<span class="lbl">状态</span>—`;
+                    let gongName = d.gongName || (g + '宫');
+                    let markHtml = '';
+                    if (isDay && isHour) markHtml = '<span class="mark-tag mark-day">日</span><span class="mark-tag mark-hour">时</span>';
+                    else if (isDay) markHtml = '<span class="mark-tag mark-day">日</span>';
+                    else if (isHour) markHtml = '<span class="mark-tag mark-hour">时</span>';
+                    let statusText = statusArr.length > 0 ? statusArr.join("·") : '—';
+                    return `<div class="gong-box ${bgClass}">
+                        <div class="gong-top">
+                            <span class="gong-name">${gongName}</span>
+                            <span class="center-mark">${markHtml}</span>
+                            <span class="gong-shen">${d.baShen || '—'}</span>
+                        </div>
+                        <div class="gong-meta">
+                            <span>${d.direction || ''}·${d.gongWuXing || ''}</span>
+                        </div>
+                        <div class="info-row"><span class="lbl">九星</span><span class="val xing">${d.jiuXing || '—'}</span></div>
+                        <div class="info-row"><span class="lbl">八门</span><span class="val ${menClass}">${d.baMen || '—'}</span></div>
+                        <div class="info-row"><span class="lbl">天干</span><span class="val tiangan">${d.tianPan || '—'}</span></div>
+                        <div class="info-row"><span class="lbl">地盘</span><span class="val dizhi">${d.diPan || '—'}</span></div>
+                        <div class="info-row"><span class="lbl">地支</span><span class="val dizhi">${zhiMap[g] || '—'}</span></div>
+                        <div class="info-row"><span class="lbl">状态</span><span class="val status-val">${statusText}</span></div>
+                    </div>`;
+                }).join("");
+                document.getElementById("qimenGrid").innerHTML = gridHtml;
+                document.getElementById("gridCard").style.display = "block";
+
+                if (isUnlocked) {
+                    document.getElementById("reportFullCard").style.display = "block";
+                    document.getElementById("reportFull").innerHTML = cleanReport(report);
+                } else {
+                    const cut1 = Math.floor(report.length * 0.5);
+                    const cut2 = Math.floor(report.length * 0.6);
+                    const part1 = cleanReport(report.substring(0, cut1));
+                    const part2 = cleanReport(report.substring(cut1, cut2));
+                    document.getElementById("reportPreview").innerHTML = `
+                        <p style="color: var(--gold-color); font-size: 12px;">公历：${data.year}年${data.month}月${data.day}日 ${data.hour}时${data.minute}分</p>
+                        <p style="color: var(--text-muted); font-size: 12px;">四柱：${bazi.year}年 ${bazi.month}月 ${bazi.day}日 ${bazi.hour}时</p>
+                        <div style="border-top: 1px solid rgba(212,175,55,0.2); margin:10px 0;"></div>
+                        <div class="report-box-fade">${part1}</div>
+                        <div class="report-fade-part">${part2}</div>
+                    `;
+                    document.getElementById("reportPreviewCard").style.display = "block";
+                }
+                document.getElementById("resetBtn").style.display = "block";
+                document.getElementById("addToHomeCard").style.display = "block";
+            })
+            .catch(err => { document.getElementById("loadingCard").style.display = "none"; document.getElementById("reportPreviewCard").style.display = "block"; document.getElementById("reportPreview").innerHTML = `<span style="color:#ff6b6b;">❌ 网络错误，请稍后重试。</span>`; });
+        });
+
+        // unlockBtn 已改为直接跳转到个人中心，无需弹窗
+
+        function selectPay(el, type) { document.querySelectorAll(".pay-card").forEach(card => card.classList.remove("active")); el.classList.add("active"); }
+
+        function verifyCardKey() {
+            const key = document.getElementById("cardKeyInput").value.trim();
+            const msgEl = document.getElementById("verifyMsg");
+            if (!key) { msgEl.innerHTML = '<span style="color:#ff6b6b;">请输入卡密</span>'; return; }
+            msgEl.innerHTML = '<span style="color:var(--gold-color);">正在验证卡密...</span>';
+            fetch("/api/pay/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cardKey: key, userId: currentUserId }) })
+            .then(res => res.json())
+            .then(res => {
+                if (res.code !== 200) { msgEl.innerHTML = `<span style="color:#ff6b6b;">❌ ${res.msg || "卡密无效"}</span>`; return; }
+                msgEl.innerHTML = `<span style="color:#46c290;">✓ ${res.data.message}</span>`;
+                setTimeout(() => {
+                    document.getElementById("payModal").style.display = "none";
+                    document.getElementById("reportPreviewCard").style.display = "none";
+                    document.getElementById("reportFullCard").style.display = "block";
+                    document.getElementById("reportFull").innerHTML = currentFullReport;
+                    isUnlocked = true;
+                    updateVipTag();
+                    document.getElementById("reportFullCard").scrollIntoView({ behavior: "smooth" });
+                }, 800);
+            })
+            .catch(err => { msgEl.innerHTML = '<span style="color:#ff6b6b;">❌ 网络错误，请稍后重试</span>'; });
+        }
+
+        document.getElementById("resetBtn").addEventListener("click", function() { window.location.href = '/index.html'; });
+
+
+    
+    (function(){
+      var sel = document.getElementById('birthYearSelect');
+      if (!sel) return;
+      function syncClass(){
+        if (sel.value) sel.classList.add('has-value');
+        else sel.classList.remove('has-value');
+      }
+      syncClass();
+      sel.addEventListener('change', syncClass);
+    })();
+</script>
+</body>
+</html>
