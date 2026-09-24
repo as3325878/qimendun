@@ -23,10 +23,11 @@ const qrcode = require('qrcode');
 const { paiPan } = require('./lib/qimen');
 const { buildReport } = require('./lib/report');
 
-const DATA_DIR = path.join(__dirname, 'data');
+const __base = (typeof __dirname !== 'undefined') ? __dirname : '/';
+const DATA_DIR = path.join(__base, 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const CARDS_FILE = path.join(DATA_DIR, 'cards.json');
-let USE_MEMORY = !!(process.env.VERCEL || process.env.NETLIFY);
+let USE_MEMORY = !!(process.env.VERCEL || process.env.NETLIFY || process.env.CF_PAGES);
 /* 自动探测：文件系统可写则用文件模式，只读（如 Netlify Functions）则内存模式 */
 if (!USE_MEMORY) {
   try { fs.mkdirSync(DATA_DIR, { recursive: true }); }
@@ -162,8 +163,23 @@ function vipStatus(user) {
 
 /* ---------- 应用 ---------- */
 const app = express();
-app.use(express.json({ limit: '1mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+if (process.env.CF_PAGES) {
+  /* Cloudflare Workers：绕过 body-parser/iconv-lite（workerd 兼容问题），手动解析 JSON body */
+  app.use((req, res, next) => {
+    let chunks = [];
+    req.on('data', c => chunks.push(c));
+    req.on('end', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
+      req.body = {};
+      if (raw) { try { req.body = JSON.parse(raw); } catch (e) { req.body = {}; } }
+      next();
+    });
+    req.on('error', () => { req.body = {}; next(); });
+  });
+} else {
+  app.use(express.json({ limit: '1mb' }));
+}
+app.use(express.static(path.join(__base, 'public')));
 
 /* 首页数据 */
 app.get('/api/blobs-status', (req, res) => {
@@ -323,8 +339,8 @@ app.get('/api/qrcode', (req, res) => {
 });
 
 /* 兜底：前端路由 */
-app.get(/^\/(index|qimen|profile|poster)(\.html)?$/, (req, res) => res.sendFile(path.join(__dirname, 'public', req.params[0] + '.html')));
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get(/^\/(index|qimen|profile|poster)(\.html)?$/, (req, res) => res.sendFile(path.join(__base, 'public', req.params[0] + '.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__base, 'public', 'index.html')));
 
 ensureData();
 module.exports = app;
